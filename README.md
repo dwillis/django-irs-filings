@@ -15,7 +15,14 @@ Getting started
 Install it.
 
 ```bash
+# Default installation (uses SQLite)
 $ pip install django-irs-filings
+
+# For PostgreSQL support
+$ pip install django-irs-filings[postgres]
+
+# For MySQL support
+$ pip install django-irs-filings[mysql]
 ```
 
 Add `irs` to your list of `INSTALLED_APPS` in `settings.py`.

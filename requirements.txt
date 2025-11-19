@@ -1,11 +1,16 @@
-Django
-requests
-psycopg2
+Django>=5.1,<5.2
+requests>=2.32.0
 
 # Testing
-agate
-subsample
-flake8
+agate>=1.9.0
+subsample>=0.1.0
+flake8>=7.0.0
+coverage>=7.4.0
 
 # Packaging
-wheel
+wheel>=0.43.0
+build>=1.2.0
+
+# Optional database drivers
+# PostgreSQL: psycopg2-binary>=2.9.9 or psycopg>=3.1.0
+# MySQL: mysqlclient>=2.2.0
