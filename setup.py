@@ -1,6 +1,5 @@
 import os
-from setuptools import setup
-from distutils.core import Command
+from setuptools import setup, Command
 
 with open(os.path.join(os.path.dirname(__file__), 'README.md')) as readme:
     README = readme.read()
@@ -27,40 +26,46 @@ class TestCommand(Command):
                     'ENGINE': 'django.db.backends.sqlite3'
                 }
             },
-            INSTALLED_APPS=('irs',)
+            INSTALLED_APPS=('irs',),
+            USE_TZ=True,
+            SECRET_KEY='test-secret-key-for-testing-only',
+            DEFAULT_AUTO_FIELD='django.db.models.BigAutoField',
         )
         from django.core.management import call_command
-        from django.conf import settings
         import django
-        if django.VERSION[:2] >= (1, 7):
-            django.setup()
-            settings.BASE_DIR = os.path.dirname(__file__)
+        django.setup()
+        settings.BASE_DIR = os.path.dirname(__file__)
         call_command('test', 'irs')
 
 setup(
     name='django-irs-filings',
-    version='0.1.6',
+    version='0.2.0',
     packages=['irs'],
     include_package_data=True,
     license='MIT',
-    description='A Django app to download IRS 527 filings and \
-    load them into a database',
+    description='A Django app to download IRS 527 filings and load them into a database',
     long_description=README,
+    long_description_content_type='text/markdown',
     url='https://github.com/sahilchinoy/django-irs',
     author='Sahil Chinoy',
     author_email='sahil.chinoy@gmail.com',
     classifiers=[
         'Environment :: Web Environment',
         'Framework :: Django',
+        'Framework :: Django :: 5.1',
         'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
     ],
+    python_requires='>=3.10',
     install_requires=[
-        'requests>=2.7.0',
+        'Django>=5.1,<5.2',
+        'requests>=2.32.0',
     ],
     cmdclass={
         'test': TestCommand

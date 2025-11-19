@@ -1,10 +1,9 @@
 import os
-import io
 import csv
-import sys
 import logging
 from decimal import Decimal
 from datetime import datetime
+from django.utils import timezone
 from irs.management.commands import IRSCommand
 from irs.models import F8872, Contribution, Expenditure, Committee
 
@@ -56,7 +55,9 @@ class RowParser:
             # Get rid of non-ASCII characters
             cell = cell.encode('ascii', 'ignore').decode()
             if cell_type == 'D':
-                cell = datetime.strptime(cell, '%Y%m%d')
+                # Parse datetime and make it timezone-aware
+                naive_dt = datetime.strptime(cell, '%Y%m%d')
+                cell = timezone.make_aware(naive_dt)
             elif cell_type == 'I':
                 cell = int(cell)
             elif cell_type == 'N':
@@ -192,17 +193,8 @@ class Command(IRSCommand):
         global CONTRIBUTIONS
         global EXPENDITURES
 
-        with io.open(self.final_path, 'rU', encoding='ISO-8859-1') as raw_file:
-            # Deal with badly encoded files in Python 2
-            if sys.version_info < (3, 0):
-                def reencode(file):
-                    for line in file:
-                        yield line.decode('ISO-8859-1').encode('utf-8')
-
-                reader = csv.reader(reencode(open(self.final_path, 'rU')),
-                                    delimiter='|')
-            else:
-                reader = csv.reader(raw_file, delimiter='|')
+        with open(self.final_path, 'r', encoding='ISO-8859-1', newline='') as raw_file:
+            reader = csv.reader(raw_file, delimiter='|')
 
             for row in reader:
                 # Use bulk_create to save contributions and expenditures

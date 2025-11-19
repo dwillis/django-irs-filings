@@ -12,7 +12,7 @@ class Committee(models.Model):
         max_length=9)
     name = models.CharField(max_length=70)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -75,10 +75,12 @@ class Contribution(models.Model):
         null=True)
     filing = models.ForeignKey(
         'F8872',
+        on_delete=models.CASCADE,
         null=True,
         related_name='contributions')
     committee = models.ForeignKey(
         'Committee',
+        on_delete=models.CASCADE,
         null=True,
         related_name='contributions')
 
@@ -104,8 +106,8 @@ class Contribution(models.Model):
         null=True,
         blank=True)
 
-    def __unicode__(self):
-        return self.contributor_name
+    def __str__(self):
+        return self.contributor_name or ''
 
 
 class Expenditure(models.Model):
@@ -167,15 +169,17 @@ class Expenditure(models.Model):
         blank=True)
     filing = models.ForeignKey(
         'F8872',
+        on_delete=models.CASCADE,
         null=True,
         related_name='expenditures')
     committee = models.ForeignKey(
         'Committee',
+        on_delete=models.CASCADE,
         null=True,
         related_name='expenditures')
 
-    def __unicode__(self):
-        return self.recipient_name
+    def __str__(self):
+        return self.recipient_name or ''
 
 
 class F8872(models.Model):
@@ -186,6 +190,7 @@ class F8872(models.Model):
 
     committee = models.ForeignKey(
         'Committee',
+        on_delete=models.CASCADE,
         null=True,
         related_name='filings')
     record_type = models.CharField(max_length=1)
@@ -338,11 +343,12 @@ class F8872(models.Model):
     is_amended = models.BooleanField(default=False)
     amended_by = models.ForeignKey(
         'self',
+        on_delete=models.SET_NULL,
         null=True,
         related_name='amends')
 
     class Meta:
         ordering = ['-end_date', '-form_id_number']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.form_id_number
