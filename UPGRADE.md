@@ -17,7 +17,9 @@ This release updates django-irs-filings to support the latest versions of Django
 - **Reason:** Django 5.1 is the latest LTS version with significant performance improvements and security enhancements.
 
 ### Database Support
-- PostgreSQL users: Update to `psycopg2-binary>=2.9.9` or consider migrating to `psycopg>=3.0` for better performance
+- **Default:** SQLite (no additional dependencies required)
+- **PostgreSQL:** Install with `pip install django-irs-filings[postgres]`
+- **MySQL:** Install with `pip install django-irs-filings[mysql]`
 - All databases: Timezone support is now enabled by default
 
 ## Breaking Changes
@@ -34,7 +36,8 @@ All Python 2 compatibility code has been removed. If you're still on Python 2, y
 ```
 Django>=5.1,<5.2
 requests>=2.32.0
-psycopg2-binary>=2.9.9
+# No database driver required by default (uses SQLite)
+# Optional: psycopg2-binary>=2.9.9 for PostgreSQL
 ```
 
 ## Migration Steps
@@ -49,7 +52,14 @@ python --version
 
 ### 2. Update Your Dependencies
 ```bash
+# For SQLite (default)
 pip install --upgrade django-irs-filings
+
+# For PostgreSQL
+pip install --upgrade django-irs-filings[postgres]
+
+# For MySQL
+pip install --upgrade django-irs-filings[mysql]
 ```
 
 ### 3. Update Your Django Settings
@@ -183,13 +193,31 @@ Instead of flushing the entire database, support incremental updates:
 - Search results
 ```
 
-### 10. Better Test Coverage
-```python
-# Expand test suite:
-- Integration tests for download process
-- API tests (if REST API added)
-- Performance benchmarks
-- Edge case handling
+### 10. Better Test Coverage ✅ IMPLEMENTED
+Test coverage has been significantly expanded from 4 to 21 tests:
+
+**New Test Classes:**
+- `ModelTests`: Tests for model methods, string representations, and relationships
+- `QueryTests`: Database query and aggregation tests
+- `EdgeCaseTests`: Edge cases, null values, large numbers, timezone handling
+
+**Coverage includes:**
+- All model `__str__()` methods
+- Foreign key relationships (CASCADE and SET_NULL)
+- Model ordering
+- Data aggregation and filtering
+- Null value handling
+- Large decimal values (up to 17 digits)
+- Timezone-aware datetime fields
+- Amendment tracking
+
+Run tests with:
+```bash
+python setup.py test
+# or with coverage
+pip install coverage
+coverage run setup.py test
+coverage report
 ```
 
 ## Performance Improvements
@@ -199,11 +227,13 @@ The upgrade to Django 5.1 and Python 3.11+ provides:
 - Improved database query optimization
 - Better memory management
 - Faster CSV parsing with modern Python
+- SQLite as default reduces setup complexity and works out-of-the-box
 
 ## Compatibility
 
 ### Tested Configurations
-- Python 3.11 + Django 5.1 + PostgreSQL 14
+- Python 3.11 + Django 5.1 + SQLite 3 (default)
+- Python 3.11 + Django 5.1 + PostgreSQL (with extras)
 - Python 3.12 + Django 5.1 + SQLite 3
 
 ### Known Issues

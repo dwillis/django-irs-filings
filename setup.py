@@ -67,6 +67,11 @@ setup(
         'Django>=5.1,<5.2',
         'requests>=2.32.0',
     ],
+    extras_require={
+        'postgres': ['psycopg2-binary>=2.9.9'],
+        'mysql': ['mysqlclient>=2.2.0'],
+        'test': ['coverage>=7.4.0', 'agate>=1.9.0', 'subsample>=0.1.0'],
+    },
     cmdclass={
         'test': TestCommand
     },
